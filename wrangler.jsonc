@@ -1,5 +1,5 @@
 {
-  // Cloudflare Workers, free plan. See SETUP.md.
+  // Cloudflare Workers, free plan.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "order-limits",
   "main": "worker/index.js",

@@ -1,7 +1,7 @@
 name: Cloudflare usage
 
-# Every 4 hours: if today's usage passes 60% of the free limit, open an issue,
-# which GitHub emails to you. Upgrading is one click ($5/month, no code changes).
+# Every 4 hours: opens an issue when the day's Worker requests pass 60% of the
+# free plan's daily limit.
 on:
   schedule:
     - cron: "17 */4 * * *"
@@ -30,7 +30,7 @@ jobs:
           cat usage.txt
           [ $code -eq 2 ] && echo "warn=true" >> "$GITHUB_OUTPUT"
           [ $code -eq 0 ] || [ $code -eq 2 ]
-      - name: Open an issue (emails you)
+      - name: Open an issue
         if: steps.usage.outputs.warn == 'true'
         uses: actions/github-script@v7
         with:

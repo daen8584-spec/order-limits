@@ -53,9 +53,18 @@ Some decisions behind the code:
 - **At most 10 messages are shown at once.** Any one of them blocks the order, and a shopper needs a few clear messages, not dozens.
 - **If the checkout rule ever fails, checkout carries on** (`blockOnFailure: false`). A bug in the app shouldn't cost a store a sale.
 
-## Setting it up
+## Deployment
 
-See [SETUP.md](SETUP.md).
+`.github/workflows/deploy.yml` deploys the Worker with Wrangler and the app with Shopify CLI on every push to `main`. It uses these repository settings:
+
+| Name | Type |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` (Workers edit, Account Analytics read) | secret |
+| `CLOUDFLARE_ACCOUNT_ID` | secret |
+| `SHOPIFY_API_SECRET` | secret |
+| `SHOPIFY_SERVICE_ACCOUNT_TOKEN` | secret |
+| `SHOPIFY_API_KEY`, `APP_HANDLE`, `APP_URL` | variables |
+| `SERVICE_NOTICE` (optional message shown on the app page) | variable |
 
 ## Privacy
 
