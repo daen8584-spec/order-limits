@@ -57,6 +57,7 @@ jobs:
       - name: Deploy checkout rule, settings screen and app settings to Shopify
         if: env.SHOPIFY_SERVICE_ACCOUNT_TOKEN != ''
         run: |
+          rustup target add wasm32-unknown-unknown
           npm ci
           node scripts/configure.mjs
           npx shopify app deploy --allow-updates --source-control-url "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"

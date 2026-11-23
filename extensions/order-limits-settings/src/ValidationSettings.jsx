@@ -1,7 +1,7 @@
 import "@shopify/ui-extensions/preact";
 import { render } from "preact";
 import { useState } from "preact/hooks";
-import { CONFIG_KEY, CONFIG_NAMESPACE, MESSAGE_KEYS, VARIABLES_KEY } from "../../order-limits-rule/src/config.js";
+import { CONFIG_KEY, CONFIG_NAMESPACE, MESSAGE_KEYS, VARIABLES_KEY } from "../../../shared/config.js";
 import { FREE_RULES, addRules, fromForm, isPaid, problemsByField, savedConfig, toForm } from "./form.js";
 
 const t = (key, values) => shopify.i18n.translate(key, values);

@@ -1,5 +1,6 @@
-// The settings a merchant saves for one checkout rule, and how they're checked.
-// Shared by the checkout rule (which runs inside Shopify) and the settings screen.
+// The settings a merchant saves for one checkout rule, and how they're checked
+// before saving. Used by the settings screen; the checkout rule (Rust, in
+// extensions/order-limits-rule/src/config.rs) reads the same format.
 
 export const CONFIG_NAMESPACE = "$app:order-limits";
 export const CONFIG_KEY = "config";

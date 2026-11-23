@@ -1,4 +1,4 @@
-query CartValidationsGenerateRunInput($collectionIds: [ID!]! = []) {
+query Input($collectionIds: [ID!]! = []) {
   buyerJourney {
     step
   }

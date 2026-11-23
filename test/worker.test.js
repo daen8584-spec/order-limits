@@ -84,9 +84,12 @@ describe("app page", () => {
     expect(await (await call("/app.js")).text()).toBe("asset /app.js");
   });
   it("answers with a retry hint instead of crashing", async () => {
+    const quiet = console.error;
+    console.error = () => {};
     const res = await call("/", {}, { ...env, ASSETS: { fetch: () => Promise.reject(new Error("down")) } });
     expect(res.status).toBe(503);
     expect(res.headers.get("Retry-After")).toBe("30");
+    console.error = quiet;
   });
 });
 

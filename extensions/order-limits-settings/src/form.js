@@ -1,6 +1,6 @@
 // What the settings screen does with its fields, kept apart from the UI so it
 // can be tested without Shopify.
-import { CONFIG_KEY, MESSAGE_KEYS, emptyConfig, expand, normalize, readConfig, variablesFor } from "../../order-limits-rule/src/config.js";
+import { CONFIG_KEY, MESSAGE_KEYS, emptyConfig, expand, normalize, readConfig, variablesFor } from "../../../shared/config.js";
 
 /** Rules allowed without a paid plan. */
 export const FREE_RULES = 3;

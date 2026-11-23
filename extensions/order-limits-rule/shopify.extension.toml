@@ -11,11 +11,12 @@ description = "t:description"
   target = "cart.validations.generate.run"
   input_query = "src/cart_validations_generate_run.graphql"
   input_variables = { namespace = "$app:order-limits", key = "variables" }
-  export = "cart-validations-generate-run"
+  export = "cart_validations_generate_run"
 
   [extensions.build]
-  command = ""
-  path = "dist/function.wasm"
+  command = "cargo build --target=wasm32-unknown-unknown --release"
+  path = "target/wasm32-unknown-unknown/release/order-limits-rule.wasm"
+  watch = ["src/**/*.rs"]
 
   [extensions.ui]
   handle = "order-limits-settings"

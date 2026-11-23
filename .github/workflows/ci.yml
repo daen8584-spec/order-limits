@@ -13,9 +13,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: rustup target add wasm32-unknown-unknown
       - run: npm ci
       - name: Unit tests
         run: npm test
+      - name: Checkout rule gives the expected messages
+        working-directory: extensions/order-limits-rule
+        run: cargo test
       - name: Compiled checkout rule gives the same answers
         run: PATH="$PWD/node_modules/.bin:$PATH" node scripts/run-wasm.mjs
       - name: Cloudflare config is valid

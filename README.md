@@ -8,7 +8,7 @@ It runs for free. There's no server to pay for and nothing to keep running on a 
 
 | Part | Where it runs | Cost |
 |---|---|---|
-| The checkout check | Inside Shopify, as a [Shopify Function](https://shopify.dev/docs/apps/build/functions) (`extensions/order-limits-rule`) | Free |
+| The checkout check | Inside Shopify, as a [Shopify Function](https://shopify.dev/docs/apps/build/functions) written in Rust (`extensions/order-limits-rule`) | Free |
 | The settings screen | Inside Shopify admin, as an admin UI extension (`extensions/order-limits-settings`) | Free |
 | The app's page and Shopify's privacy webhooks | Cloudflare Workers free plan (`worker/`, `web/`) | Free up to 100,000 requests a day |
 
@@ -19,7 +19,8 @@ Each merchant uses only a handful of server requests a day (opening the app's pa
 ## What's in the repository
 
 ```
-extensions/order-limits-rule/      checkout rule: input query, limits, messages in 7 languages
+extensions/order-limits-rule/      checkout rule (Rust): input query, limits, messages in 7 languages
+shared/config.js                   settings format and checks, used by the settings screen
 extensions/order-limits-settings/  settings screen in Shopify admin (Preact + Polaris web components)
 worker/index.js                    Cloudflare Worker: app page with per-shop frame protection, webhooks, session check
 web/                               the app's page (served free as static files) and the privacy policy
@@ -31,12 +32,14 @@ test/                              unit tests
 ## Testing
 
 ```
-npm ci
-npm test                                  # 79 unit tests
+npm ci && npm test                                         # settings, server, page, usage alarm
+(cd extensions/order-limits-rule && cargo test)            # checkout rule
 PATH="$PWD/node_modules/.bin:$PATH" node scripts/run-wasm.mjs
 ```
 
-The second command builds the checkout rule into the WebAssembly that Shopify runs, then replays every test case through Shopify's function runner and checks that the answers are identical. It also checks that each run stays well under Shopify's instruction limit. It needs internet access to Shopify's CDN, so CI runs it on every push.
+The last command builds the checkout rule into the WebAssembly that Shopify runs, replays every test case through Shopify's function runner, and checks both the answers and that each run stays under Shopify's limit of 11 million instructions. CI runs all three on every push.
+
+The rule was first written in JavaScript. That version gave the right answers, but the instruction check showed a 200-item cart costing up to 175 million instructions, most of it just reading the cart into JavaScript objects. The Rust version reads only the fields it uses.
 
 The test cases (`test/scenarios.js`) list the exact message a shopper should see for each cart. They include converting currencies, currencies without decimals, Spanish, French and German formatting, the merchant's own wording, and a 200-line cart with 100 rules. They also check that damaged settings never block a checkout.
 

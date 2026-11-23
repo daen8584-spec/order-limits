@@ -1,6 +1,6 @@
 // Carts and settings with the exact messages a shopper should see, written by hand.
-// The same cases run against the JavaScript here and, in CI, against the compiled
-// checkout rule that Shopify runs (see scripts/write-fixtures.mjs).
+// Written to extensions/order-limits-rule/tests/fixtures by scripts/write-fixtures.mjs,
+// then checked by `cargo test` and, compiled the way Shopify runs it, by scripts/run-wasm.mjs.
 
 const P = (n) => `gid://shopify/Product/${n}`;
 const V = (n) => `gid://shopify/ProductVariant/${n}`;

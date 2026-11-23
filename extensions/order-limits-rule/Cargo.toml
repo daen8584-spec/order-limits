@@ -1,0 +1,16 @@
+[package]
+name = "order-limits-rule"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+shopify_function = "2.3.0"
+
+[dev-dependencies]
+serde_json = "1"
+
+[profile.release]
+lto = true
+opt-level = 'z'
+strip = true

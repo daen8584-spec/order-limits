@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_CONFIG_BYTES, byteLength, normalize, readConfig, variablesFor } from "../extensions/order-limits-rule/src/config.js";
+import { MAX_CONFIG_BYTES, byteLength, normalize, readConfig, variablesFor } from "../shared/config.js";
 
 const rule = (over = {}) => ({ kind: "product", id: "gid://shopify/Product/1", title: "Mug", min: 2, max: null, step: null, ...over });
 
