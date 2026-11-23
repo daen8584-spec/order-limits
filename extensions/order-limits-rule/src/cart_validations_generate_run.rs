@@ -49,27 +49,48 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
         }
     }
 
-    // One pass over the cart: how many of each variant, product and collection.
+    // One pass over the cart, counting only what a rule asks about. Shopify caps
+    // how much work a checkout rule may do, and big carts are the costly case.
+    let mut slot: HashMap<&str, usize, Fnv> = HashMap::with_capacity_and_hasher(config.rules.len(), Fnv);
+    for (i, rule) in config.rules.iter().enumerate() {
+        slot.insert(rule.id.as_str(), i);
+    }
+    let want_variants = config.rules.iter().any(|r| r.kind == Kind::Variant);
+    let want_products = config.rules.iter().any(|r| r.kind == Kind::Product);
+    let want_collections = config.rules.iter().any(|r| r.kind == Kind::Collection);
+    let mut quantity = vec![0i64; config.rules.len()];
+    // The first cart line each rule matched, to name it in a message.
+    let mut first_line: Vec<Option<usize>> = vec![None; config.rules.len()];
     let mut items: i64 = 0;
-    let mut counts: HashMap<&str, i64> = HashMap::new();
-    let mut names: HashMap<&str, String> = HashMap::new();
-    for line in lines {
-        let quantity = *line.quantity() as i64;
-        items += quantity;
+    for (n, line) in lines.iter().enumerate() {
+        let q = *line.quantity() as i64;
+        items += q;
+        if config.rules.is_empty() {
+            continue;
+        }
         let Merchandise::ProductVariant(variant) = line.merchandise() else { continue };
-        let product = variant.product();
-        *counts.entry(variant.id().as_str()).or_default() += quantity;
-        *counts.entry(product.id().as_str()).or_default() += quantity;
-        for membership in product.in_collections() {
-            if *membership.is_member() {
-                *counts.entry(membership.collection_id().as_str()).or_default() += quantity;
+        let mut count = |id: &str| {
+            if let Some(&i) = slot.get(id) {
+                quantity[i] += q;
+                first_line[i].get_or_insert(n);
+            }
+        };
+        if want_variants {
+            count(variant.id().as_str());
+        }
+        if want_products || want_collections {
+            let product = variant.product();
+            if want_products {
+                count(product.id().as_str());
+            }
+            if want_collections {
+                for membership in product.in_collections() {
+                    if *membership.is_member() {
+                        count(membership.collection_id().as_str());
+                    }
+                }
             }
         }
-        names.entry(product.id().as_str()).or_insert_with(|| product.title().to_string());
-        names.entry(variant.id().as_str()).or_insert_with(|| match variant.title().as_deref() {
-            Some(t) if !t.is_empty() && t != "Default Title" => format!("{} ({})", product.title(), t),
-            _ => product.title().to_string(),
-        });
     }
 
     // Number of items in the whole order.
@@ -86,27 +107,65 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
 
     // Limits on products, variants and collections. A limit only applies when
     // something it covers is in the cart.
-    for rule in &config.rules {
-        let quantity = counts.get(rule.id.as_str()).copied().unwrap_or(0);
+    for (i, rule) in config.rules.iter().enumerate() {
+        let quantity = quantity[i];
         if quantity == 0 {
             continue;
         }
-        let title = match rule.kind {
-            Kind::Collection => rule.title.clone(),
-            _ => names.get(rule.id.as_str()).cloned().unwrap_or_else(|| rule.title.clone()),
+        let key = if rule.max.is_some_and(|max| quantity > max) {
+            "itemMax"
+        } else if at_checkout && rule.min.is_some_and(|min| quantity < min) {
+            "itemMin"
+        } else if at_checkout && rule.step.is_some_and(|step| quantity % step != 0) {
+            "itemStep"
+        } else {
+            continue;
+        };
+        let title = match (rule.kind, first_line[i].map(|n| lines[n].merchandise())) {
+            (Kind::Collection, _) | (_, None) => rule.title.clone(),
+            (kind, Some(Merchandise::ProductVariant(variant))) => name(variant.product().title(), variant.title().map(String::as_str), kind),
+            _ => rule.title.clone(),
         };
         let text = |n: Option<i64>| n.map(|n| n.to_string()).unwrap_or_default();
-        let values = [("title", title), ("min", text(rule.min)), ("max", text(rule.max)), ("step", text(rule.step)), ("count", quantity.to_string())];
-        if rule.max.is_some_and(|max| quantity > max) {
-            add("itemMax", &values);
-        } else if at_checkout && rule.min.is_some_and(|min| quantity < min) {
-            add("itemMin", &values);
-        } else if at_checkout && rule.step.is_some_and(|step| quantity % step != 0) {
-            add("itemStep", &values);
-        }
+        add(key, &[("title", title), ("min", text(rule.min)), ("max", text(rule.max)), ("step", text(rule.step)), ("count", quantity.to_string())]);
     }
 
     errors
+}
+
+/// "Sneaker (42)" for a variant rule; just the product name for a product rule
+/// or a product without options.
+fn name(product: &str, variant: Option<&str>, kind: Kind) -> String {
+    match variant {
+        Some(v) if kind == Kind::Variant && !v.is_empty() && v != "Default Title" => format!("{product} ({v})"),
+        _ => product.to_string(),
+    }
+}
+
+/// FNV-1a: a fast hash for the short IDs used here. The standard hasher guards
+/// against attackers choosing keys, which costs time and doesn't apply to IDs
+/// from Shopify.
+#[derive(Default, Clone, Copy)]
+struct Fnv;
+
+impl std::hash::BuildHasher for Fnv {
+    type Hasher = FnvHasher;
+    fn build_hasher(&self) -> FnvHasher {
+        FnvHasher(0xcbf2_9ce4_8422_2325)
+    }
+}
+
+struct FnvHasher(u64);
+
+impl std::hash::Hasher for FnvHasher {
+    fn finish(&self) -> u64 {
+        self.0
+    }
+    fn write(&mut self, bytes: &[u8]) {
+        for &b in bytes {
+            self.0 = (self.0 ^ b as u64).wrapping_mul(0x0100_0000_01b3);
+        }
+    }
 }
 
 #[cfg(test)]
