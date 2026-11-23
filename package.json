@@ -13,7 +13,8 @@
     "build:function": "cd extensions/order-limits-rule && shopify app function build",
     "test:wasm": "node scripts/run-wasm.mjs",
     "deploy:worker": "npm run build:web && wrangler deploy",
-    "deploy:shopify": "shopify app deploy --allow-updates"
+    "deploy:shopify": "shopify app deploy --allow-updates",
+    "check:settings": "esbuild extensions/order-limits-settings/src/ValidationSettings.jsx --bundle --format=esm --jsx=automatic --outfile=/tmp/order-limits-settings.js --log-level=warning"
   },
   "devDependencies": {
     "@shopify/cli": "5.0.2",
