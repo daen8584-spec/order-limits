@@ -37,7 +37,7 @@ function amount(value) {
  * Cleans what the settings screen sends and lists what's wrong with it.
  * Returns `{ config, problems }`; only save when `problems` is empty.
  */
-export function normalize(input) {
+export function normalize(input, { checkSize = true } = {}) {
   const problems = [];
   const config = emptyConfig();
   const src = input && typeof input === "object" ? input : {};
@@ -92,7 +92,7 @@ export function normalize(input) {
     if (text) config.messages[key] = text;
   }
 
-  if (byteLength(JSON.stringify(config)) > MAX_CONFIG_BYTES) problems.push({ field: "rules", code: "too-big" });
+  if (checkSize && byteLength(JSON.stringify(config)) > MAX_CONFIG_BYTES) problems.push({ field: "rules", code: "too-big" });
   return { config, problems };
 }
 
@@ -131,9 +131,12 @@ export function byteLength(text) {
   return bytes;
 }
 
-/** Reads a saved config defensively: an old or damaged value never crashes checkout. */
+/**
+ * Reads a saved config defensively: an old or damaged value never crashes checkout.
+ * Skips the size check, which only matters when saving and costs checkout time.
+ */
 export function readConfig(value) {
   if (!value || typeof value !== "object") return emptyConfig();
-  const { config } = normalize(value);
+  const { config } = normalize(value, { checkSize: false });
   return { ...config, rules: config.rules.map(expand) };
 }

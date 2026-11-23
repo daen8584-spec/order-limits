@@ -167,6 +167,22 @@ export const scenarios = [
     errors: [],
   },
   {
+    name: "big cart where every item is checked against 25 collections",
+    input: input({
+      config: cfg({
+        rules: [
+          ...Array.from({ length: 25 }, (_, i) => ({ kind: "collection", id: C(i), title: `C${i}`, min: null, max: 1000, step: null })),
+          ...Array.from({ length: 75 }, (_, i) => ({ kind: "variant", id: V(i), min: 1, max: null, step: null })),
+        ],
+      }),
+      lines: Array.from({ length: 200 }, (_, i) =>
+        line(1, { variant: i, product: i, title: `P${i}`, collections: Array.from({ length: 25 }, (_, c) => [c, (i + c) % 4 === 0]) }),
+      ),
+      subtotal: "4000.0",
+    }),
+    errors: [],
+  },
+  {
     name: "empty cart",
     input: input({ config: cfg({ minTotal: "20.00", minItems: 2 }), lines: [], subtotal: "0.0" }),
     errors: [],

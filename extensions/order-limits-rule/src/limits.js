@@ -42,24 +42,40 @@ export function check(input) {
     }
   }
 
+  // One pass over the cart: how many of each variant, product and collection.
+  // Shopify caps how much work a checkout rule may do, so nothing below loops
+  // over the cart again for each rule.
+  let items = 0;
+  const byVariant = new Map();
+  const byProduct = new Map();
+  const byCollection = new Map();
+  const variantOf = new Map();
+  for (const line of lines) {
+    const quantity = line.quantity || 0;
+    items += quantity;
+    const variant = line.merchandise;
+    if (!variant || variant.__typename !== "ProductVariant") continue;
+    addTo(byVariant, variant.id, quantity);
+    if (!variantOf.has(variant.id)) variantOf.set(variant.id, variant);
+    const product = variant.product;
+    if (!product) continue;
+    addTo(byProduct, product.id, quantity);
+    if (!variantOf.has(product.id)) variantOf.set(product.id, variant);
+    const memberships = product.inCollections;
+    if (memberships) for (let i = 0; i < memberships.length; i++) if (memberships[i].isMember) addTo(byCollection, memberships[i].collectionId, quantity);
+  }
+
   // Number of items in the whole order.
-  const items = lines.reduce((sum, line) => sum + (line.quantity || 0), 0);
   if (config.minItems && atCheckout && items > 0 && items < config.minItems) add("minItems", { min: config.minItems, count: items });
   if (config.maxItems && items > config.maxItems) add("maxItems", { max: config.maxItems, count: items });
 
   // Limits on products, variants and collections. A limit only applies when
   // something it covers is in the cart.
+  const counts = { variant: byVariant, product: byProduct, collection: byCollection };
   for (const rule of config.rules) {
-    let quantity = 0;
-    let title = rule.title;
-    for (const line of lines) {
-      const variant = line.merchandise;
-      if (!variant || variant.__typename !== "ProductVariant") continue;
-      if (!covers(rule, variant)) continue;
-      quantity += line.quantity || 0;
-      if (rule.kind !== "collection") title = nameOf(variant, rule.kind) || title;
-    }
+    const quantity = counts[rule.kind].get(rule.id) || 0;
     if (quantity === 0) continue;
+    const title = rule.kind === "collection" ? rule.title : nameOf(variantOf.get(rule.id), rule.kind) || rule.title;
     const values = { title, min: rule.min, max: rule.max, step: rule.step, count: quantity };
     if (rule.max && quantity > rule.max) add("itemMax", values);
     else if (atCheckout && rule.min && quantity < rule.min) add("itemMin", values);
@@ -69,13 +85,12 @@ export function check(input) {
   return errors;
 }
 
-function covers(rule, variant) {
-  if (rule.kind === "variant") return variant.id === rule.id;
-  if (rule.kind === "product") return variant.product?.id === rule.id;
-  return (variant.product?.inCollections ?? []).some((m) => m.collectionId === rule.id && m.isMember);
+function addTo(map, key, quantity) {
+  if (key) map.set(key, (map.get(key) || 0) + quantity);
 }
 
 function nameOf(variant, kind) {
+  if (!variant) return "";
   const product = variant.product?.title;
   if (kind === "product" || !variant.title || variant.title === "Default Title") return product;
   return product ? `${product} (${variant.title})` : variant.title;
