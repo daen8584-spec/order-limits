@@ -10,7 +10,7 @@ fs.mkdirSync(dir, { recursive: true });
 
 for (const s of scenarios) {
   const name = s.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const payload = { export: "cart-validations-generate-run", target: "cart.validations.generate.run", input: s.input, output: output(s.errors) };
+  const payload = { export: "cart_validations_generate_run", target: "cart.validations.generate.run", input: s.input, output: output(s.errors) };
   fs.writeFileSync(path.join(dir, `${name}.json`), JSON.stringify({ payload }, null, 2) + "\n");
 }
 console.log(`Wrote ${scenarios.length} fixtures to ${path.relative(process.cwd(), dir)}`);
