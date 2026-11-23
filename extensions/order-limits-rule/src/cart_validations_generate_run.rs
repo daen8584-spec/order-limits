@@ -22,6 +22,10 @@ fn cart_validations_generate_run(input: schema::cart_validations_generate_run::I
     })
 }
 
+/// A shopper needs a few clear messages, not dozens; any one of them blocks the
+/// order. Stopping here also keeps the worst carts well within Shopify's limits.
+pub const MAX_MESSAGES: usize = 10;
+
 pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String> {
     let config = Config::read(input.validation().metafield().map(|m| m.json_value()));
     let at_checkout = input.buyer_journey().step().map(|s| s.as_str()) != Some("CART_INTERACTION");
@@ -30,7 +34,11 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
     let rate = if rate.is_finite() && rate > 0.0 { rate } else { 1.0 };
     let lines = input.cart().lines();
     let mut errors = Vec::new();
-    let mut add = |key: &str, values: &[(&str, String)]| errors.push(language.message(key, values, &config.messages));
+    let add = |errors: &mut Vec<String>, key: &str, values: &[(&str, String)]| {
+        if errors.len() < MAX_MESSAGES {
+            errors.push(language.message(key, values, &config.messages));
+        }
+    };
 
     // Order total, compared in the currency the shopper pays in.
     let subtotal = input.cart().cost().subtotal_amount();
@@ -39,13 +47,13 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
     if let Some(min) = config.min_total {
         let min = (min as f64 * rate).round() as i64;
         if at_checkout && !lines.is_empty() && paid < min {
-            add("minTotal", &[("amount", language.money(min, currency)), ("missing", language.money(min - paid, currency))]);
+            add(&mut errors, "minTotal", &[("amount", language.money(min, currency)), ("missing", language.money(min - paid, currency))]);
         }
     }
     if let Some(max) = config.max_total {
         let max = (max as f64 * rate).round() as i64;
         if paid > max {
-            add("maxTotal", &[("amount", language.money(max, currency)), ("excess", language.money(paid - max, currency))]);
+            add(&mut errors, "maxTotal", &[("amount", language.money(max, currency)), ("excess", language.money(paid - max, currency))]);
         }
     }
 
@@ -93,18 +101,21 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
     // Number of items in the whole order.
     if let Some(min) = config.min_items {
         if at_checkout && items > 0 && items < min {
-            add("minItems", &[("min", min.to_string()), ("count", items.to_string())]);
+            add(&mut errors, "minItems", &[("min", min.to_string()), ("count", items.to_string())]);
         }
     }
     if let Some(max) = config.max_items {
         if items > max {
-            add("maxItems", &[("max", max.to_string()), ("count", items.to_string())]);
+            add(&mut errors, "maxItems", &[("max", max.to_string()), ("count", items.to_string())]);
         }
     }
 
     // Limits on products, variants and collections. A limit only applies when
     // something it covers is in the cart.
     for (i, rule) in config.rules.iter().enumerate() {
+        if errors.len() >= MAX_MESSAGES {
+            break;
+        }
         let quantity = quantity[i];
         if quantity == 0 {
             continue;
@@ -120,7 +131,7 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
         };
         let title = rule.title.clone();
         let text = |n: Option<i64>| n.map(|n| n.to_string()).unwrap_or_default();
-        add(key, &[("title", title), ("min", text(rule.min)), ("max", text(rule.max)), ("step", text(rule.step)), ("count", quantity.to_string())]);
+        add(&mut errors, key, &[("title", title), ("min", text(rule.min)), ("max", text(rule.max)), ("step", text(rule.step)), ("count", quantity.to_string())]);
     }
 
     errors

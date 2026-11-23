@@ -193,9 +193,10 @@ export const scenarios = [
       lines: Array.from({ length: 200 }, (_, i) => line(1, { variant: 1e12 + i, product: 1e12 + i, collections: COLLECTIONS.map((c) => [c, true]) })),
       subtotal: "4000.0",
     }),
+    // Only the first 10 messages are shown; any one of them blocks the order.
     errors: [
       ...COLLECTIONS.map((c) => `Collection ${c}: the minimum is 1000 (you have 200).`),
-      ...Array.from({ length: 95 }, (_, i) => `Product ${i}: the minimum is 10 (you have 1).`),
+      ...Array.from({ length: 5 }, (_, i) => `Product ${i}: the minimum is 10 (you have 1).`),
     ],
   },
   {
