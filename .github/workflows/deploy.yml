@@ -1,7 +1,7 @@
 name: Deploy
 
 # Runs on every push to main, and by hand from the Actions tab.
-# Each part is skipped until its keys are added (see SETUP.md).
+# Each job is skipped when its credentials aren't configured.
 on:
   push:
     branches: [main]

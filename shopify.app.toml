@@ -1,4 +1,4 @@
-# Filled in once the app exists in the Dev Dashboard (see SETUP.md).
+# client_id and URLs are set at deploy time by scripts/configure.mjs.
 client_id = "00000000000000000000000000000000"
 name = "Order Limits"
 application_url = "https://order-limits.example.workers.dev"
