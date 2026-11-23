@@ -39,6 +39,8 @@ PATH="$PWD/node_modules/.bin:$PATH" node scripts/run-wasm.mjs
 
 The last command builds the checkout rule into the WebAssembly that Shopify runs, replays every test case through Shopify's function runner, and checks both the answers and that each run stays under Shopify's limit of 11 million instructions. CI runs all three on every push.
 
+Measured on the compiled rule: everyday carts use 26,000 to 107,000 instructions. The biggest valid cart (200 lines, 65 rules, 5 collections) uses 6.9 million, and the worst case (200 lines breaking all 100 rules) 8.5 million, which is 78% of the limit. The CI check fails at 90%.
+
 The rule was first written in JavaScript. That version gave the right answers, but the instruction check showed a 200-item cart costing up to 175 million instructions, most of it just reading the cart into JavaScript objects. The Rust version reads only the fields it uses.
 
 The test cases (`test/scenarios.js`) list the exact message a shopper should see for each cart. They include converting currencies, currencies without decimals, Spanish, French and German formatting, the merchant's own wording, and a 200-line cart with 100 rules. They also check that damaged settings never block a checkout.

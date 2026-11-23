@@ -5,8 +5,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { buildFunction, getFunctionInfo, loadFixture, runFunction } from "@shopify/shopify-function-test-helpers";
 
-/** Shopify stops a checkout rule after this many instructions. */
-const INSTRUCTION_LIMIT = 11_000_000;
+/**
+ * Shopify stops a checkout rule after 11 million instructions (for carts up to 200
+ * lines). Fail at 90% of that, so a change can't creep up to the edge unnoticed.
+ */
+const INSTRUCTION_LIMIT = 9_900_000;
 
 const dir = path.resolve("extensions/order-limits-rule");
 await buildFunction(dir);
