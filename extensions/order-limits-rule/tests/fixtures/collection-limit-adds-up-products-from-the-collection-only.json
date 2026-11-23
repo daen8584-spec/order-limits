@@ -1,0 +1,113 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "rules": [
+              {
+                "kind": "collection",
+                "id": "gid://shopify/Collection/7",
+                "title": "Wine",
+                "min": null,
+                "max": 12,
+                "step": null
+              }
+            ],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "200.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 8,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "title": "Default Title",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Red wine",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "quantity": 6,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "title": "Default Title",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "title": "White wine",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "quantity": 5,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "title": "Default Title",
+              "product": {
+                "id": "gid://shopify/Product/3",
+                "title": "Glass",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": false
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Wine: the maximum is 12 (you have 14).",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

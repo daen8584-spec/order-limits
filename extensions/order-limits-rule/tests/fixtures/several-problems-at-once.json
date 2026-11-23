@@ -1,0 +1,82 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "DE"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "rules": [
+              {
+                "kind": "product",
+                "id": "gid://shopify/Product/1",
+                "title": "Mug",
+                "min": null,
+                "max": 4,
+                "step": null
+              }
+            ],
+            "messages": {},
+            "minTotal": "30.00",
+            "maxItems": 5
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "24.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 6,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "title": "Default Title",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Mug",
+                "inCollections": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Der Mindestbestellwert beträgt 30,00 EUR. Füge noch 6,00 EUR hinzu, um zur Kasse zu gehen.",
+                "target": "$.cart"
+              },
+              {
+                "message": "Die Bestellung darf höchstens 5 Artikel enthalten (du hast 6).",
+                "target": "$.cart"
+              },
+              {
+                "message": "Mug: Höchstmenge 4 (du hast 6).",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

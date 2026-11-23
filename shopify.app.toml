@@ -1,0 +1,32 @@
+# Filled in once the app exists in the Dev Dashboard (see SETUP.md).
+client_id = "00000000000000000000000000000000"
+name = "Order Limits"
+application_url = "https://order-limits.example.workers.dev"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+
+[access_scopes]
+scopes = "read_products,write_validations"
+
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = true
+
+[webhooks]
+api_version = "2026-07"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks"
+
+  [[webhooks.subscriptions]]
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+  uri = "/webhooks"
+
+[auth]
+redirect_urls = [ "https://order-limits.example.workers.dev/auth/callback" ]
+
+[pos]
+embedded = false

@@ -1,0 +1,70 @@
+{
+  "name": "Order limits",
+  "total": {
+    "heading": "Order total",
+    "min": "Minimum order total",
+    "max": "Maximum order total",
+    "help": "In your store's currency. Shoppers paying in another currency see it converted. Leave empty for no limit."
+  },
+  "items": {
+    "heading": "Number of items",
+    "min": "Minimum items per order",
+    "max": "Maximum items per order"
+  },
+  "rules": {
+    "heading": "Products and collections",
+    "help": "Limits for specific products, variants or collections. A limit only applies when the shopper is buying something it covers. \"Multiple of\" sells in packs, for example 6 for boxes of six.",
+    "free": "The free plan includes {{count}} rules. Upgrade from the app's page for unlimited rules.",
+    "addProducts": "Add products",
+    "addVariants": "Add variants",
+    "addCollections": "Add collections",
+    "name": "Applies to",
+    "min": "Minimum",
+    "max": "Maximum",
+    "step": "Multiple of",
+    "remove": "Remove {{name}}",
+    "removeShort": "Remove"
+  },
+  "kinds": {
+    "product": "Product (all variants together)",
+    "variant": "Variant",
+    "collection": "Collection (all its products together)"
+  },
+  "messages": {
+    "heading": "Messages for shoppers (optional)",
+    "help": "Leave empty to use the built-in messages, shown in the shopper's language (English, Spanish, French, German, Italian, Portuguese or Dutch).",
+    "paidOnly": "Custom messages are part of the paid plan. The built-in messages are shown in the shopper's language.",
+    "minTotal": "Order total too low",
+    "minTotalHelp": "You can use {amount} and {missing}.",
+    "maxTotal": "Order total too high",
+    "maxTotalHelp": "You can use {amount} and {excess}.",
+    "minItems": "Too few items",
+    "minItemsHelp": "You can use {min} and {count}.",
+    "maxItems": "Too many items",
+    "maxItemsHelp": "You can use {max} and {count}.",
+    "itemMin": "Product below its minimum",
+    "itemMinHelp": "You can use {title}, {min} and {count}.",
+    "itemMax": "Product above its maximum",
+    "itemMaxHelp": "You can use {title}, {max} and {count}.",
+    "itemStep": "Product not in a multiple of its pack size",
+    "itemStepHelp": "You can use {title}, {step} and {count}."
+  },
+  "problems": {
+    "amount": "Enter an amount, like 25 or 25.50.",
+    "count": "Enter a whole number.",
+    "max-below-min": "The maximum is lower than the minimum.",
+    "step-above-max": "The pack size is bigger than the maximum, so nothing could be bought.",
+    "empty-rule": "Set a minimum, a maximum or a multiple, or remove this row.",
+    "duplicate": "This is already in the list.",
+    "target": "This item can't be used. Remove it and add it again.",
+    "too-many": "You can have up to 100 rules.",
+    "too-many-collections": "You can have up to 100 collections.",
+    "too-big": "There are too many rules for Shopify to check at checkout. Remove some rules.",
+    "plan": "This needs the paid plan. Upgrade from the app's page, or remove the extra rules or messages."
+  },
+  "errors": {
+    "fix": "Some settings need fixing before they can be saved.",
+    "save": "Shopify couldn't save the settings: {{reason}}",
+    "setup": "The settings storage couldn't be prepared. Reload the page; if it keeps happening, reinstall the app."
+  }
+}

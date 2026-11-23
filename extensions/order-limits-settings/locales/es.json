@@ -1,0 +1,70 @@
+{
+  "name": "Límites de pedido",
+  "total": {
+    "heading": "Importe del pedido",
+    "min": "Importe mínimo del pedido",
+    "max": "Importe máximo del pedido",
+    "help": "En la moneda de tu tienda. Quien pague en otra moneda lo verá convertido. Déjalo vacío para no poner límite."
+  },
+  "items": {
+    "heading": "Número de artículos",
+    "min": "Mínimo de artículos por pedido",
+    "max": "Máximo de artículos por pedido"
+  },
+  "rules": {
+    "heading": "Productos y colecciones",
+    "help": "Límites para productos, variantes o colecciones concretos. Un límite solo se aplica cuando el cliente compra algo que cubre. «Múltiplo de» sirve para vender por packs, por ejemplo 6 para cajas de seis.",
+    "free": "El plan gratuito incluye {{count}} reglas. Mejora el plan desde la página de la app para tener reglas ilimitadas.",
+    "addProducts": "Añadir productos",
+    "addVariants": "Añadir variantes",
+    "addCollections": "Añadir colecciones",
+    "name": "Se aplica a",
+    "min": "Mínimo",
+    "max": "Máximo",
+    "step": "Múltiplo de",
+    "remove": "Quitar {{name}}",
+    "removeShort": "Quitar"
+  },
+  "kinds": {
+    "product": "Producto (todas sus variantes juntas)",
+    "variant": "Variante",
+    "collection": "Colección (todos sus productos juntos)"
+  },
+  "messages": {
+    "heading": "Mensajes para los clientes (opcional)",
+    "help": "Déjalos vacíos para usar los mensajes incluidos, que se muestran en el idioma del cliente (español, inglés, francés, alemán, italiano, portugués o neerlandés).",
+    "paidOnly": "Los mensajes personalizados son parte del plan de pago. Los mensajes incluidos se muestran en el idioma del cliente.",
+    "minTotal": "Importe del pedido demasiado bajo",
+    "minTotalHelp": "Puedes usar {amount} y {missing}.",
+    "maxTotal": "Importe del pedido demasiado alto",
+    "maxTotalHelp": "Puedes usar {amount} y {excess}.",
+    "minItems": "Muy pocos artículos",
+    "minItemsHelp": "Puedes usar {min} y {count}.",
+    "maxItems": "Demasiados artículos",
+    "maxItemsHelp": "Puedes usar {max} y {count}.",
+    "itemMin": "Producto por debajo de su mínimo",
+    "itemMinHelp": "Puedes usar {title}, {min} y {count}.",
+    "itemMax": "Producto por encima de su máximo",
+    "itemMaxHelp": "Puedes usar {title}, {max} y {count}.",
+    "itemStep": "Producto que no es múltiplo de su pack",
+    "itemStepHelp": "Puedes usar {title}, {step} y {count}."
+  },
+  "problems": {
+    "amount": "Escribe un importe, como 25 o 25,50.",
+    "count": "Escribe un número entero.",
+    "max-below-min": "El máximo es menor que el mínimo.",
+    "step-above-max": "El pack es más grande que el máximo, así que no se podría comprar nada.",
+    "empty-rule": "Pon un mínimo, un máximo o un múltiplo, o quita esta fila.",
+    "duplicate": "Ya está en la lista.",
+    "target": "Este elemento no se puede usar. Quítalo y vuelve a añadirlo.",
+    "too-many": "Puedes tener hasta 100 reglas.",
+    "too-many-collections": "Puedes tener hasta 100 colecciones.",
+    "too-big": "Hay demasiadas reglas para que Shopify las compruebe en el pago. Quita algunas.",
+    "plan": "Esto necesita el plan de pago. Mejora el plan desde la página de la app, o quita las reglas o mensajes de más."
+  },
+  "errors": {
+    "fix": "Hay ajustes que corregir antes de guardar.",
+    "save": "Shopify no pudo guardar los ajustes: {{reason}}",
+    "setup": "No se pudo preparar el almacenamiento de los ajustes. Recarga la página; si sigue pasando, reinstala la app."
+  }
+}
