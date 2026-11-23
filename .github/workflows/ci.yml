@@ -22,5 +22,7 @@ jobs:
         run: cargo test
       - name: Compiled checkout rule gives the same answers
         run: PATH="$PWD/node_modules/.bin:$PATH" node scripts/run-wasm.mjs
+      - name: Settings screen bundles the way Shopify CLI bundles it
+        run: npm run check:settings
       - name: Cloudflare config is valid
         run: npx wrangler deploy --dry-run --outdir /tmp/worker
