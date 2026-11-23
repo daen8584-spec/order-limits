@@ -5,6 +5,14 @@
 import { fill, retryDelay, ourRule, ruleStatus, serverState, texts } from "./home.js";
 
 const $ = (id) => document.getElementById(id);
+
+/**
+ * Shows or hides an element. Polaris components set their own display style, so
+ * the `hidden` attribute alone doesn't hide them.
+ */
+function show(el, visible) {
+  el.style.display = visible ? "" : "none";
+}
 const t = texts(globalThis.shopify?.config?.locale ?? navigator.language);
 const apiKey = document.querySelector('meta[name="shopify-api-key"]')?.content;
 const appHandle = document.querySelector('meta[name="app-handle"]')?.content;
@@ -75,30 +83,30 @@ function render({ rule, paid }) {
   $("status-section").setAttribute("heading", t.statusHeading);
   $("status").textContent = { on: t.statusOn, off: t.statusOff, missing: t.statusMissing }[status];
   const primary = $("primary");
-  primary.hidden = status === "on";
+  show(primary, status !== "on");
   primary.textContent = status === "missing" ? t.add : t.turnOn;
   primary.onclick = async () => {
     primary.setAttribute("loading", "");
-    $("action-error").hidden = true;
+    show($("action-error"), false);
     try {
       await change(rule);
       render(await loadRule());
     } catch (error) {
       $("action-error").textContent = fill(t.failed, { reason: error.message });
-      $("action-error").hidden = false;
+      show($("action-error"), true);
     } finally {
       primary.removeAttribute("loading");
     }
   };
   const edit = $("edit");
-  edit.hidden = status === "missing";
+  show(edit, status !== "missing");
   edit.textContent = t.edit;
   edit.onclick = () => open("shopify://admin/settings/checkout", "_top");
 
   $("plan-section").setAttribute("heading", t.planHeading);
   $("plan").textContent = paid ? t.planPaid : t.planFree;
   $("plans").textContent = t.plans;
-  $("plans").hidden = !appHandle;
+  show($("plans"), Boolean(appHandle));
   $("plans").onclick = () => open(`shopify://admin/charges/${appHandle}/pricing_plans`, "_top");
 }
 
