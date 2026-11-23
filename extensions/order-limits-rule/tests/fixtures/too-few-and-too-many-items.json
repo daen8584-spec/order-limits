@@ -1,0 +1,76 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": 3,
+            "maxItems": null,
+            "rules": [],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "10.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 1,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": []
+              }
+            }
+          },
+          {
+            "quantity": 1,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "inCollections": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Your order needs at least 3 items (you have 2).",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

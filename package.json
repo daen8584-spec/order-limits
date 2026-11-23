@@ -1,0 +1,25 @@
+{
+  "name": "order-limits",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "extensions/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "build:web": "node scripts/build-web.mjs",
+    "build:function": "cd extensions/order-limits-rule && shopify app function build",
+    "test:wasm": "node scripts/run-wasm.mjs",
+    "deploy:worker": "npm run build:web && wrangler deploy",
+    "deploy:shopify": "shopify app deploy --allow-updates"
+  },
+  "devDependencies": {
+    "@shopify/cli": "5.0.2",
+    "@shopify/shopify-function-test-helpers": "^1.1.1",
+    "graphql": "^16.15.0",
+    "vitest": "3.2.4",
+    "wrangler": "4.167.0"
+  }
+}

@@ -1,0 +1,7 @@
+node_modules
+.wrangler
+.shopify
+dist
+generated
+.dev.vars
+/web/build

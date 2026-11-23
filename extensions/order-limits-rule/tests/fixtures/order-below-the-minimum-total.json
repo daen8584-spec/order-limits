@@ -1,0 +1,65 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": "20.00",
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
+            "rules": [],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "12.5",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 1,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Your order must be at least 20.00 EUR. Add 7.50 EUR more to check out.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

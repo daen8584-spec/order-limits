@@ -1,0 +1,48 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": "20.00",
+            "maxTotal": null,
+            "minItems": 2,
+            "maxItems": null,
+            "rules": [],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "0.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": []
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": []
+          }
+        }
+      ]
+    }
+  }
+}

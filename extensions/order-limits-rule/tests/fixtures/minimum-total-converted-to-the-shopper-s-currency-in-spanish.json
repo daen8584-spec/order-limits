@@ -1,0 +1,65 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.08",
+      "localization": {
+        "language": {
+          "isoCode": "ES"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": "1000.00",
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
+            "rules": [],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "950.0",
+            "currencyCode": "USD"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 1,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "El pedido mínimo es de 1.080,00 USD. Añade 130,00 USD más para finalizar la compra.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

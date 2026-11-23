@@ -1,0 +1,109 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
+            "rules": [
+              {
+                "kind": "collection",
+                "id": "gid://shopify/Collection/7",
+                "title": "Wine",
+                "max": 12
+              }
+            ],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "200.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 8,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "quantity": 6,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "quantity": 5,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "product": {
+                "id": "gid://shopify/Product/3",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/7",
+                    "isMember": false
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Wine: the maximum is 12 (you have 14).",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

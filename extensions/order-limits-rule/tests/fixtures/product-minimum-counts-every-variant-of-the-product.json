@@ -1,0 +1,83 @@
+{
+  "payload": {
+    "export": "cart_validations_generate_run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "presentmentCurrencyRate": "1.0",
+      "localization": {
+        "language": {
+          "isoCode": "EN"
+        }
+      },
+      "validation": {
+        "metafield": {
+          "jsonValue": {
+            "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
+            "rules": [
+              {
+                "kind": "product",
+                "id": "gid://shopify/Product/1",
+                "title": "Mug",
+                "min": 6
+              }
+            ],
+            "messages": {}
+          }
+        }
+      },
+      "cart": {
+        "cost": {
+          "subtotalAmount": {
+            "amount": "40.0",
+            "currencyCode": "EUR"
+          }
+        },
+        "lines": [
+          {
+            "quantity": 2,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": []
+              }
+            }
+          },
+          {
+            "quantity": 2,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "inCollections": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Mug: the minimum is 6 (you have 4).",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

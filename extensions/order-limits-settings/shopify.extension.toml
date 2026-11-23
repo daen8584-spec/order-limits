@@ -1,0 +1,11 @@
+api_version = "2026-10"
+
+[[extensions]]
+name = "t:name"
+handle = "order-limits-settings"
+type = "ui_extension"
+uid = "7d6f4c1b-81de-41de-b5d9-219b2110cfb2"
+
+[[extensions.targeting]]
+module = "./src/ValidationSettings.jsx"
+target = "admin.settings.validation.render"

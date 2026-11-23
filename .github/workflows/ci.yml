@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: rustup target add wasm32-unknown-unknown
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Checkout rule gives the expected messages
+        working-directory: extensions/order-limits-rule
+        run: cargo test
+      - name: Compiled checkout rule gives the same answers
+        run: PATH="$PWD/node_modules/.bin:$PATH" node scripts/run-wasm.mjs
+      - name: Cloudflare config is valid
+        run: npx wrangler deploy --dry-run --outdir /tmp/worker

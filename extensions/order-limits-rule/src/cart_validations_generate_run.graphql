@@ -1,0 +1,40 @@
+query Input($collectionIds: [ID!]! = []) {
+  buyerJourney {
+    step
+  }
+  presentmentCurrencyRate
+  localization {
+    language {
+      isoCode
+    }
+  }
+  validation {
+    metafield(namespace: "$app:order-limits", key: "config") {
+      jsonValue
+    }
+  }
+  cart {
+    cost {
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+    }
+    lines {
+      quantity
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          product {
+            id
+            inCollections(ids: $collectionIds) {
+              collectionId
+              isMember
+            }
+          }
+        }
+      }
+    }
+  }
+}

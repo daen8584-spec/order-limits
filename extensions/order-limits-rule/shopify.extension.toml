@@ -1,0 +1,22 @@
+api_version = "2026-07"
+
+[[extensions]]
+name = "t:name"
+handle = "order-limits-rule"
+type = "function"
+uid = "4a1b47a5-4608-49b9-902d-48c43a474387"
+description = "t:description"
+
+  [[extensions.targeting]]
+  target = "cart.validations.generate.run"
+  input_query = "src/cart_validations_generate_run.graphql"
+  input_variables = { namespace = "$app:order-limits", key = "variables" }
+  export = "cart_validations_generate_run"
+
+  [extensions.build]
+  command = "cargo build --target=wasm32-unknown-unknown --release"
+  path = "target/wasm32-unknown-unknown/release/order-limits-rule.wasm"
+  watch = ["src/**/*.rs"]
+
+  [extensions.ui]
+  handle = "order-limits-settings"
