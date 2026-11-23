@@ -16,14 +16,16 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
             "rules": [
               {
                 "kind": "product",
                 "id": "gid://shopify/Product/9",
                 "title": "Tea",
-                "min": 6,
-                "max": null,
-                "step": null
+                "min": 6
               }
             ],
             "messages": {}
@@ -43,10 +45,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/1",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/1",
-                "title": "Mug",
                 "inCollections": []
               }
             }

@@ -28,10 +28,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/1",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/1",
-                "title": "Mug",
                 "inCollections": []
               }
             }

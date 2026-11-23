@@ -6,6 +6,8 @@ use shopify_function::prelude::JsonValue;
 use std::collections::{BTreeMap, HashSet};
 
 const MAX_RULES: usize = 100;
+/// Matches MAX_COLLECTIONS in shared/config.js: only these get collection data from Shopify.
+const MAX_COLLECTIONS: usize = 5;
 const MAX_MESSAGE_CHARS: usize = 300;
 pub const MESSAGE_KEYS: [&str; 7] = ["minTotal", "maxTotal", "minItems", "maxItems", "itemMin", "itemMax", "itemStep"];
 
@@ -49,8 +51,15 @@ impl Config {
         };
         if let Some(JsonValue::Array(rules)) = o.get("rules") {
             let mut seen = HashSet::new();
+            let mut collections = 0;
             for r in rules.iter().take(MAX_RULES) {
                 if let Some(rule) = rule(r) {
+                    if rule.kind == Kind::Collection {
+                        if collections == MAX_COLLECTIONS {
+                            continue;
+                        }
+                        collections += 1;
+                    }
                     if seen.insert(rule.id.clone()) {
                         config.rules.push(rule);
                     }
@@ -84,7 +93,7 @@ fn rule(value: &JsonValue) -> Option<Rule> {
         _ => return None,
     };
     let title = match r.get("title") {
-        Some(JsonValue::String(t)) => t.chars().take(120).collect(),
+        Some(JsonValue::String(t)) => t.chars().take(60).collect(),
         _ => String::new(),
     };
     let step = r.get("step").and_then(count).filter(|s| *s >= 2);

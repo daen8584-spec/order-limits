@@ -51,20 +51,29 @@ describe("settings", () => {
     expect(problems).toContainEqual({ field: "rules", code: "too-big" });
   });
 
-  it("fits 100 product rules", () => {
-    const rules = Array.from({ length: 100 }, (_, i) => rule({ id: `gid://shopify/Product/${8_000_000_000_000 + i}`, title: "Organic coffee beans 1kg" }));
+  it("fits 100 rules with short names, or 65 with the longest", () => {
+    const rules = Array.from({ length: 100 }, (_, i) => rule({ id: `gid://shopify/Product/${8_000_000_000_000 + i}`, title: "Coffee 1kg" }));
     const { config, problems } = normalize({ minTotal: "25", rules });
     expect(problems).toEqual([]);
     expect(byteLength(JSON.stringify(config))).toBeLessThan(MAX_CONFIG_BYTES);
+    const long = Array.from({ length: 65 }, (_, i) => rule({ id: `gid://shopify/Product/${8_000_000_000_000 + i}`, title: "x".repeat(80) }));
+    expect(normalize({ rules: long }).problems).toEqual([]);
+    expect(normalize({ rules: long }).config.rules[0].title).toHaveLength(60);
+  });
+
+  it("allows at most 5 collection rules", () => {
+    const rules = Array.from({ length: 6 }, (_, i) => rule({ kind: "collection", id: `gid://shopify/Collection/${i}` }));
+    expect(normalize({ rules }).problems).toEqual([{ field: "rules", code: "too-many-collections" }]);
+    expect(variablesFor(normalize({ rules }).config).collectionIds).toHaveLength(5);
   });
 
   it("stores only what checkout needs", () => {
     const { config } = normalize({ rules: [rule({ max: 9 }), rule({ kind: "collection", id: "gid://shopify/Collection/7", title: "Wine", min: null, max: 3 })] });
     expect(config.rules).toEqual([
-      { kind: "product", id: "gid://shopify/Product/1", min: 2, max: 9 },
+      { kind: "product", id: "gid://shopify/Product/1", title: "Mug", min: 2, max: 9 },
       { kind: "collection", id: "gid://shopify/Collection/7", title: "Wine", max: 3 },
     ]);
-    expect(readConfig(config).rules[0]).toEqual({ kind: "product", id: "gid://shopify/Product/1", title: "", min: 2, max: 9, step: null });
+    expect(readConfig(config).rules[0]).toEqual({ kind: "product", id: "gid://shopify/Product/1", title: "Mug", min: 2, max: 9, step: null });
   });
 
   it("lists collections for the checkout rule's query", () => {

@@ -47,7 +47,7 @@ Some decisions behind the code:
 
 - **Minimums aren't enforced while the cart is being built.** A shopper has to be able to add the first item before reaching "at least 6". Maximums apply straight away.
 - **Amounts are compared in whole cents,** converted to the shopper's currency with Shopify's own exchange rate.
-- **Settings are checked before saving.** Errors appear next to the right field, and Shopify's 10 KB limit for what a checkout rule can read is enforced. 100 product rules fit.
+- **Settings are checked before saving.** Errors appear next to the right field, and Shopify's limits are enforced: 10 KB of settings (100 rules with short names, or 65 with the longest names) and up to 5 collection rules. For each collection rule, Shopify adds data to every cart line, and a checkout rule's input can't exceed 128 KB. The test carts include the biggest valid cart (200 lines, 5 collections) and check that it stays under both limits.
 - **If the checkout rule ever fails, checkout carries on** (`blockOnFailure: false`). A bug in the app shouldn't cost a store a sale.
 
 ## Setting it up

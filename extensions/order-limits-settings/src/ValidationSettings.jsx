@@ -153,9 +153,9 @@ async function loadShop() {
   return { currency: result?.data?.shop?.currencyCode ?? "", paid: isPaid(result?.data?.currentAppInstallation) };
 }
 
-/** Product and variant names aren't stored with the rules, so they're looked up here. */
+/** Looks up current names, so a renamed product shows (and is saved) with its new name. */
 async function withTitles(rules) {
-  const ids = rules.filter((r) => !r.title || r.kind !== "collection").map((r) => r.id);
+  const ids = rules.map((r) => r.id);
   if (ids.length === 0) return rules;
   const result = await shopify.query(
     `#graphql

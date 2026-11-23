@@ -59,10 +59,8 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
     let want_products = config.rules.iter().any(|r| r.kind == Kind::Product);
     let want_collections = config.rules.iter().any(|r| r.kind == Kind::Collection);
     let mut quantity = vec![0i64; config.rules.len()];
-    // The first cart line each rule matched, to name it in a message.
-    let mut first_line: Vec<Option<usize>> = vec![None; config.rules.len()];
     let mut items: i64 = 0;
-    for (n, line) in lines.iter().enumerate() {
+    for line in lines {
         let q = *line.quantity() as i64;
         items += q;
         if config.rules.is_empty() {
@@ -72,7 +70,6 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
         let mut count = |id: &str| {
             if let Some(&i) = slot.get(id) {
                 quantity[i] += q;
-                first_line[i].get_or_insert(n);
             }
         };
         if want_variants {
@@ -121,25 +118,12 @@ pub fn check(input: &schema::cart_validations_generate_run::Input) -> Vec<String
         } else {
             continue;
         };
-        let title = match (rule.kind, first_line[i].map(|n| lines[n].merchandise())) {
-            (Kind::Collection, _) | (_, None) => rule.title.clone(),
-            (kind, Some(Merchandise::ProductVariant(variant))) => name(variant.product().title(), variant.title().map(String::as_str), kind),
-            _ => rule.title.clone(),
-        };
+        let title = rule.title.clone();
         let text = |n: Option<i64>| n.map(|n| n.to_string()).unwrap_or_default();
         add(key, &[("title", title), ("min", text(rule.min)), ("max", text(rule.max)), ("step", text(rule.step)), ("count", quantity.to_string())]);
     }
 
     errors
-}
-
-/// "Sneaker (42)" for a variant rule; just the product name for a product rule
-/// or a product without options.
-fn name(product: &str, variant: Option<&str>, kind: Kind) -> String {
-    match variant {
-        Some(v) if kind == Kind::Variant && !v.is_empty() && v != "Default Title" => format!("{product} ({v})"),
-        _ => product.to_string(),
-    }
 }
 
 /// FNV-1a: a fast hash for the short IDs used here. The standard hasher guards

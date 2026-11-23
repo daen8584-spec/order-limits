@@ -1,3 +1,5 @@
+import { normalize } from "../shared/config.js";
+
 // Carts and settings with the exact messages a shopper should see, written by hand.
 // Written to extensions/order-limits-rule/tests/fixtures by scripts/write-fixtures.mjs,
 // then checked by `cargo test` and, compiled the way Shopify runs it, by scripts/run-wasm.mjs.
@@ -6,14 +8,18 @@ const P = (n) => `gid://shopify/Product/${n}`;
 const V = (n) => `gid://shopify/ProductVariant/${n}`;
 const C = (n) => `gid://shopify/Collection/${n}`;
 
-function line(quantity, { variant = 1, product = 1, title = "Mug", variantTitle = "Default Title", collections = [] } = {}) {
+/**
+ * A cart line as Shopify sends it for this rule's input query. `collections` lists
+ * [collectionNumber, isMember] for every collection the rule asked about: Shopify
+ * answers for each requested collection, member or not.
+ */
+function line(quantity, { variant = 1, product = 1, collections = [] } = {}) {
   return {
     quantity,
     merchandise: {
       __typename: "ProductVariant",
       id: V(variant),
-      title: variantTitle,
-      product: { id: P(product), title, inCollections: collections.map(([id, isMember]) => ({ collectionId: C(id), isMember })) },
+      product: { id: P(product), inCollections: collections.map(([id, isMember]) => ({ collectionId: C(id), isMember })) },
     },
   };
 }
@@ -23,10 +29,16 @@ function input({ config, lines = [], subtotal = "0.0", currency = "EUR", step = 
     buyerJourney: { step },
     presentmentCurrencyRate: rate,
     localization: { language: { isoCode: language } },
-    validation: { metafield: config === undefined ? null : { jsonValue: config } },
+    // Saved settings go through the same checks as the settings screen, so the
+    // test carts hold exactly what a store would store. Damaged ones are kept as they are.
+    validation: { metafield: config === undefined ? null : { jsonValue: Array.isArray(config.rules) ? normalize(config).config : config } },
     cart: { cost: { subtotalAmount: { amount: subtotal, currencyCode: currency } }, lines },
   };
 }
+
+/** Five collections (the most allowed) and a 60-character name (the longest stored). */
+const COLLECTIONS = [101, 102, 103, 104, 105];
+const LONG = "Organic single-origin coffee beans, medium roast, 1 kg bag x";
 
 const cfg = (c) => ({ v: 1, rules: [], messages: {}, ...c });
 
@@ -79,8 +91,8 @@ export const scenarios = [
   {
     name: "product minimum counts every variant of the product",
     input: input({
-      config: cfg({ rules: [{ kind: "product", id: P(1), title: "Old title", min: 6, max: null, step: null }] }),
-      lines: [line(2, { variant: 1, variantTitle: "Red" }), line(2, { variant: 2, variantTitle: "Blue" })],
+      config: cfg({ rules: [{ kind: "product", id: P(1), title: "Mug", min: 6, max: null, step: null }] }),
+      lines: [line(2, { variant: 1 }), line(2, { variant: 2 })],
       subtotal: "40.0",
     }),
     errors: ["Mug: the minimum is 6 (you have 4)."],
@@ -97,8 +109,8 @@ export const scenarios = [
   {
     name: "variant maximum names the variant, also in the cart",
     input: input({
-      config: cfg({ rules: [{ kind: "variant", id: V(2), title: "Sneaker", min: null, max: 2, step: null }] }),
-      lines: [line(3, { variant: 2, product: 5, title: "Sneaker", variantTitle: "42" })],
+      config: cfg({ rules: [{ kind: "variant", id: V(2), title: "Sneaker (42)", min: null, max: 2, step: null }] }),
+      lines: [line(3, { variant: 2, product: 5 })],
       subtotal: "300.0",
       step: "CART_INTERACTION",
     }),
@@ -118,9 +130,9 @@ export const scenarios = [
     input: input({
       config: cfg({ rules: [{ kind: "collection", id: C(7), title: "Wine", min: null, max: 12, step: null }] }),
       lines: [
-        line(8, { product: 1, variant: 1, title: "Red wine", collections: [[7, true]] }),
-        line(6, { product: 2, variant: 2, title: "White wine", collections: [[7, true]] }),
-        line(5, { product: 3, variant: 3, title: "Glass", collections: [[7, false]] }),
+        line(8, { product: 1, variant: 1, collections: [[7, true]] }),
+        line(6, { product: 2, variant: 2, collections: [[7, true]] }),
+        line(5, { product: 3, variant: 3, collections: [[7, false]] }),
       ],
       subtotal: "200.0",
     }),
@@ -155,32 +167,36 @@ export const scenarios = [
     errors: [],
   },
   {
-    name: "big cart with a hundred rules stays fast",
+    name: "biggest cart: 200 lines, 65 long-named rules with 5 collections",
     input: input({
       config: cfg({
-        maxItems: 1000,
-        rules: Array.from({ length: 100 }, (_, i) => ({ kind: i % 2 ? "product" : "collection", id: i % 2 ? P(i) : C(i), title: `R${i}`, min: null, max: 50, step: null })),
+        maxItems: 10000,
+        rules: [
+          ...COLLECTIONS.map((c) => ({ kind: "collection", id: C(c), title: LONG, min: null, max: 5000, step: null })),
+          ...Array.from({ length: 60 }, (_, i) => ({ kind: i % 2 ? "product" : "variant", id: i % 2 ? P(1e12 + i) : V(1e12 + i), title: LONG, min: null, max: 50, step: null })),
+        ],
       }),
-      lines: Array.from({ length: 200 }, (_, i) => line(2, { variant: i, product: i, title: `P${i}`, collections: [[i % 7, i % 3 === 0]] })),
+      lines: Array.from({ length: 200 }, (_, i) => line(2, { variant: 1e12 + i, product: 1e12 + i, collections: COLLECTIONS.map((c) => [c, (i + c) % 3 === 0]) })),
       subtotal: "4000.0",
     }),
     errors: [],
   },
   {
-    name: "big cart where every item is checked against 25 collections",
+    name: "biggest cart breaking all 100 rules",
     input: input({
       config: cfg({
         rules: [
-          ...Array.from({ length: 25 }, (_, i) => ({ kind: "collection", id: C(i), title: `C${i}`, min: null, max: 1000, step: null })),
-          ...Array.from({ length: 75 }, (_, i) => ({ kind: "variant", id: V(i), min: 1, max: null, step: null })),
+          ...COLLECTIONS.map((c) => ({ kind: "collection", id: C(c), title: `Collection ${c}`, min: 1000, max: null, step: null })),
+          ...Array.from({ length: 95 }, (_, i) => ({ kind: "product", id: P(1e12 + i), title: `Product ${i}`, min: 10, max: null, step: null })),
         ],
       }),
-      lines: Array.from({ length: 200 }, (_, i) =>
-        line(1, { variant: i, product: i, title: `P${i}`, collections: Array.from({ length: 25 }, (_, c) => [c, (i + c) % 4 === 0]) }),
-      ),
+      lines: Array.from({ length: 200 }, (_, i) => line(1, { variant: 1e12 + i, product: 1e12 + i, collections: COLLECTIONS.map((c) => [c, true]) })),
       subtotal: "4000.0",
     }),
-    errors: [],
+    errors: [
+      ...COLLECTIONS.map((c) => `Collection ${c}: the minimum is 1000 (you have 200).`),
+      ...Array.from({ length: 95 }, (_, i) => `Product ${i}: the minimum is 10 (you have 1).`),
+    ],
   },
   {
     name: "empty cart",

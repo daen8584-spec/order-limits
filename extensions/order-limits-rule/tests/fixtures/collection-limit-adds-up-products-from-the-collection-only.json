@@ -16,14 +16,16 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
             "rules": [
               {
                 "kind": "collection",
                 "id": "gid://shopify/Collection/7",
                 "title": "Wine",
-                "min": null,
-                "max": 12,
-                "step": null
+                "max": 12
               }
             ],
             "messages": {}
@@ -43,10 +45,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/1",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/1",
-                "title": "Red wine",
                 "inCollections": [
                   {
                     "collectionId": "gid://shopify/Collection/7",
@@ -61,10 +61,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/2",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/2",
-                "title": "White wine",
                 "inCollections": [
                   {
                     "collectionId": "gid://shopify/Collection/7",
@@ -79,10 +77,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/3",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/3",
-                "title": "Glass",
                 "inCollections": [
                   {
                     "collectionId": "gid://shopify/Collection/7",

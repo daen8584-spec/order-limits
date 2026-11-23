@@ -16,9 +16,12 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
+            "minTotal": null,
+            "maxTotal": "500.00",
+            "minItems": null,
+            "maxItems": null,
             "rules": [],
-            "messages": {},
-            "maxTotal": "500.00"
+            "messages": {}
           }
         }
       },
@@ -35,10 +38,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/1",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/1",
-                "title": "Mug",
                 "inCollections": []
               }
             }

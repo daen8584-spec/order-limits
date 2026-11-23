@@ -16,14 +16,16 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": null,
+            "maxItems": null,
             "rules": [
               {
                 "kind": "variant",
                 "id": "gid://shopify/ProductVariant/2",
-                "title": "Sneaker",
-                "min": null,
-                "max": 2,
-                "step": null
+                "title": "Sneaker (42)",
+                "max": 2
               }
             ],
             "messages": {}
@@ -43,10 +45,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/2",
-              "title": "42",
               "product": {
                 "id": "gid://shopify/Product/5",
-                "title": "Sneaker",
                 "inCollections": []
               }
             }

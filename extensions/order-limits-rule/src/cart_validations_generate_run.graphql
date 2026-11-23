@@ -26,10 +26,8 @@ query Input($collectionIds: [ID!]! = []) {
         __typename
         ... on ProductVariant {
           id
-          title
           product {
             id
-            title
             inCollections(ids: $collectionIds) {
               collectionId
               isMember

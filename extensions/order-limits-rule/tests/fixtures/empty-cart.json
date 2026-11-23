@@ -16,10 +16,12 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
-            "rules": [],
-            "messages": {},
             "minTotal": "20.00",
-            "minItems": 2
+            "maxTotal": null,
+            "minItems": 2,
+            "maxItems": null,
+            "rules": [],
+            "messages": {}
           }
         }
       },

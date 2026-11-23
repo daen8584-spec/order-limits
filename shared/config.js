@@ -9,8 +9,14 @@ export const VARIABLES_KEY = "variables";
 
 /** Shopify doesn't pass a metafield bigger than this to the checkout rule. */
 export const MAX_CONFIG_BYTES = 10_000;
-/** Shopify accepts at most 100 items in a list variable. */
-export const MAX_COLLECTIONS = 100;
+/**
+ * For every collection rule, Shopify adds an entry to every cart line it hands the
+ * checkout rule, and that input may not exceed 128 kB. Five keeps a 200-line cart
+ * well inside it (see test/fixtures.test.js).
+ */
+export const MAX_COLLECTIONS = 5;
+/** Names are stored with the rules so checkout doesn't have to fetch them. */
+export const MAX_TITLE = 60;
 export const MAX_RULES = 100;
 
 export const MESSAGE_KEYS = ["minTotal", "maxTotal", "minItems", "maxItems", "itemMin", "itemMax", "itemStep"];
@@ -72,7 +78,7 @@ export function normalize(input, { checkSize = true } = {}) {
       return;
     }
     seen.add(r.id);
-    const rule = { kind: r.kind, id: r.id, title: String(r.title ?? "").slice(0, 120), min: null, max: null, step: null };
+    const rule = { kind: r.kind, id: r.id, title: String(r.title ?? "").slice(0, MAX_TITLE), min: null, max: null, step: null };
     for (const key of ["min", "max", "step"]) {
       const v = count(r[key]);
       if (Number.isNaN(v)) problems.push({ field: `${field}.${key}`, code: "count" });
@@ -97,13 +103,10 @@ export function normalize(input, { checkSize = true } = {}) {
   return { config, problems };
 }
 
-/**
- * Leaves out empty limits, and names except for collections: checkout reads
- * product names from the cart, so storing them would only use up space.
- */
+/** Leaves out empty limits to save space. */
 function compact(rule) {
   const out = { kind: rule.kind, id: rule.id };
-  if (rule.kind === "collection" && rule.title) out.title = rule.title;
+  if (rule.title) out.title = rule.title;
   for (const key of ["min", "max", "step"]) if (rule[key] !== null) out[key] = rule[key];
   return out;
 }
@@ -115,7 +118,7 @@ export function expand(rule) {
 
 /** The input query variables that go with a config. */
 export function variablesFor(config) {
-  return { collectionIds: config.rules.filter((r) => r.kind === "collection").map((r) => r.id) };
+  return { collectionIds: config.rules.filter((r) => r.kind === "collection").map((r) => r.id).slice(0, MAX_COLLECTIONS) };
 }
 
 export function byteLength(text) {

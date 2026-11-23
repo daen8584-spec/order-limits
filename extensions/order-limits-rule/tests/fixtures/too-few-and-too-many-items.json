@@ -16,9 +16,12 @@
         "metafield": {
           "jsonValue": {
             "v": 1,
+            "minTotal": null,
+            "maxTotal": null,
+            "minItems": 3,
+            "maxItems": null,
             "rules": [],
-            "messages": {},
-            "minItems": 3
+            "messages": {}
           }
         }
       },
@@ -35,10 +38,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/1",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/1",
-                "title": "Mug",
                 "inCollections": []
               }
             }
@@ -48,10 +49,8 @@
             "merchandise": {
               "__typename": "ProductVariant",
               "id": "gid://shopify/ProductVariant/2",
-              "title": "Default Title",
               "product": {
                 "id": "gid://shopify/Product/2",
-                "title": "Mug",
                 "inCollections": []
               }
             }

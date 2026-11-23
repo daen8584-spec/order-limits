@@ -13,7 +13,7 @@
   },
   "rules": {
     "heading": "Products and collections",
-    "help": "Limits for specific products, variants or collections. A limit only applies when the shopper is buying something it covers. \"Multiple of\" sells in packs, for example 6 for boxes of six.",
+    "help": "Limits for specific products, variants or collections. A limit only applies when the shopper is buying something it covers. \"Multiple of\" sells in packs, for example 6 for boxes of six. Up to 5 collections.",
     "free": "The free plan includes {{count}} rules. Upgrade from the app's page for unlimited rules.",
     "addProducts": "Add products",
     "addVariants": "Add variants",
@@ -58,7 +58,7 @@
     "duplicate": "This is already in the list.",
     "target": "This item can't be used. Remove it and add it again.",
     "too-many": "You can have up to 100 rules.",
-    "too-many-collections": "You can have up to 100 collections.",
+    "too-many-collections": "You can have up to 5 collection rules. Shopify sends collection details for every item in the cart, and more would make big carts too large for checkout to check.",
     "too-big": "There are too many rules for Shopify to check at checkout. Remove some rules.",
     "plan": "This needs the paid plan. Upgrade from the app's page, or remove the extra rules or messages."
   },

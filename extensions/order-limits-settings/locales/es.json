@@ -13,7 +13,7 @@
   },
   "rules": {
     "heading": "Productos y colecciones",
-    "help": "Límites para productos, variantes o colecciones concretos. Un límite solo se aplica cuando el cliente compra algo que cubre. «Múltiplo de» sirve para vender por packs, por ejemplo 6 para cajas de seis.",
+    "help": "Límites para productos, variantes o colecciones concretos. Un límite solo se aplica cuando el cliente compra algo que cubre. «Múltiplo de» sirve para vender por packs, por ejemplo 6 para cajas de seis. Hasta 5 colecciones.",
     "free": "El plan gratuito incluye {{count}} reglas. Mejora el plan desde la página de la app para tener reglas ilimitadas.",
     "addProducts": "Añadir productos",
     "addVariants": "Añadir variantes",
@@ -58,7 +58,7 @@
     "duplicate": "Ya está en la lista.",
     "target": "Este elemento no se puede usar. Quítalo y vuelve a añadirlo.",
     "too-many": "Puedes tener hasta 100 reglas.",
-    "too-many-collections": "Puedes tener hasta 100 colecciones.",
+    "too-many-collections": "Puedes tener hasta 5 reglas de colección. Shopify envía los datos de colección de cada artículo del carrito, y con más los carritos grandes serían demasiado grandes para comprobarlos en el pago.",
     "too-big": "Hay demasiadas reglas para que Shopify las compruebe en el pago. Quita algunas.",
     "plan": "Esto necesita el plan de pago. Mejora el plan desde la página de la app, o quita las reglas o mensajes de más."
   },
